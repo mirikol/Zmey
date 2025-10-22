@@ -1,4 +1,6 @@
-﻿namespace Zmey
+﻿using Zmey.shared;
+
+namespace Zmey.snake
 {
     internal enum SnakeDir
     {

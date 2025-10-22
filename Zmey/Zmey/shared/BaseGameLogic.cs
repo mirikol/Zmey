@@ -1,4 +1,4 @@
-﻿namespace Zmey
+﻿namespace Zmey.shared
 {
     internal abstract class BaseGameLogic : ConsoleInput.IArrowListener
     {

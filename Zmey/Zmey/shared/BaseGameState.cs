@@ -1,4 +1,4 @@
-﻿namespace Zmey
+﻿namespace Zmey.shared
 {
     public abstract class BaseGameState
     {
