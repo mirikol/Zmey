@@ -27,6 +27,10 @@ namespace Zmey.snake
         private List<Cell> _body = new();
         private SnakeDir currentDir = SnakeDir.Right;
         private float _timeToMove = 0f;
+        private const char _snakeSymbol = '■';
+
+        public int fieldWidth;
+        public int fieldHeight;
 
         public void SetDirection(SnakeDir newDirection)
         {
@@ -48,13 +52,17 @@ namespace Zmey.snake
         public override void Reset()
         {
             _body.Clear();
-            currentDir = SnakeDir.Up;
-            _body.Add(new (0, 0));
+            var middleX = (int) (fieldWidth * 0.5);
+            var middleY = (int) (fieldHeight * 0.5);
+            currentDir = SnakeDir.Right;
+            _body.Add(new (middleX, middleY));
             _timeToMove = 0f;
         }
 
         public override void Update(float deltaTime)
         {
+            if (_body.Count == 0)
+                return;
             _timeToMove -= deltaTime;
             if (_timeToMove > 0f)
                 return;
@@ -62,10 +70,30 @@ namespace Zmey.snake
 
             var head = _body[0];
             var nextCell = ShiftTo(head);
-            _body.RemoveAt(_body.Count - 1);
+
+            if (_body.Count > 0)
+            {
+                _body.RemoveAt(_body.Count - 1);
+            }
 
             _body.Insert(0, nextCell);
-            Console.WriteLine($"{_body[0].X}, {_body[0].Y}");
+        }
+
+        public override void Draw(ConsoleRenderer renderer)
+        {
+            for (int i = 0; i < _body.Count; i++)
+            {
+                var segment = _body[i];
+
+                if (i == 0)
+                {
+                    renderer.SetPixel(segment.X, segment.Y, _snakeSymbol, 1);
+                }
+                else
+                {
+                    renderer.SetPixel(segment.X, segment.Y, _snakeSymbol, 2);
+                }
+            }
         }
     }
 }

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shared
+namespace Zmey.shared
 {
-    internal class ConsoleRenderer
+    public class ConsoleRenderer
     {
         public int width { get; private set; }
         public int height { get; private set; }
@@ -112,7 +112,6 @@ namespace Shared
             {
                 return false;
             }
-
 
             for (int i=0; i<_colors.Length; i++)
             {
