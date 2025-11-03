@@ -11,7 +11,7 @@
 
         }
         
-        private readonly HashSet<IArrowListener> _arrowListeners = new();
+        private readonly HashSet<IArrowListener> _arrowListeners = [];
 
         public void Subscribe(IArrowListener listener)
         {
