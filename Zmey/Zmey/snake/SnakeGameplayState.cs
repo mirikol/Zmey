@@ -24,13 +24,41 @@ namespace Zmey.snake
             }
         }
 
-        private List<Cell> _body = new();
+        private List<Cell> _body = [];
         private SnakeDir currentDir = SnakeDir.Right;
         private float _timeToMove = 0f;
         private const char _snakeSymbol = '■';
+        private const char _circleSymbol = '?';
+        private Cell _apple;
+        private Random _random = new Random();
 
         public int fieldWidth;
         public int fieldHeight;
+
+        public bool gameOver;
+        public bool hasWon;
+        public int level;
+
+        private void GenerateApple()
+        {
+            Cell cell = new Cell(_random.Next(fieldWidth), _random.Next(fieldHeight));
+            
+            if (_body.Count > 0 && cell.Equals(_body[0]))
+            {
+                var middleY = fieldHeight / 2;
+
+                if (cell.Y > middleY)
+                {
+                    cell = new Cell(cell.X, cell.Y - 1);
+                }
+                else
+                {
+                    cell = new Cell(cell.X, cell.Y + 1);
+                }
+            }
+
+            _apple = cell;
+        }
 
         public void SetDirection(SnakeDir newDirection)
         {
@@ -51,25 +79,55 @@ namespace Zmey.snake
 
         public override void Reset()
         {
+            hasWon = false;
+            gameOver = false;
+
             _body.Clear();
+
             var middleX = (int) (fieldWidth * 0.5);
             var middleY = (int) (fieldHeight * 0.5);
+
             currentDir = SnakeDir.Right;
             _body.Add(new (middleX, middleY));
             _timeToMove = 0f;
+
+            _apple = new Cell(middleX +5, middleY +5);
         }
 
         public override void Update(float deltaTime)
         {
             if (_body.Count == 0)
                 return;
+
             _timeToMove -= deltaTime;
-            if (_timeToMove > 0f)
+            if (_timeToMove > 0f || gameOver == true)
                 return;
-            _timeToMove = 1f / 5f;
+
+            _timeToMove = 1f / (level + 5f);
 
             var head = _body[0];
             var nextCell = ShiftTo(head);
+
+            if (nextCell.X >= fieldWidth || nextCell.Y >= fieldHeight || nextCell.X < 0 || nextCell.Y < 0)
+            {
+                gameOver = true;
+                return;
+            }
+
+            if (nextCell.X == _apple.X && nextCell.Y == _apple.Y)
+            {
+                _body.Insert(0, _apple);
+
+                if (_body.Count >= level + 3)
+                {
+                    hasWon = true;
+                }
+                else
+                {
+                    GenerateApple();
+                }
+                return;
+            }
 
             if (_body.Count > 0)
             {
@@ -94,6 +152,20 @@ namespace Zmey.snake
                     renderer.SetPixel(segment.X, segment.Y, _snakeSymbol, 2);
                 }
             }
+
+            renderer.SetPixel(_apple.X, _apple.Y, _circleSymbol, 0);
+
+            int applesCollected = _body.Count - 1;
+            string scoreText = $"Яблочки: {applesCollected}";
+            renderer.DrawString(scoreText, 1, 1, ConsoleColor.White);
+                        
+            string levelText = $"Уровень: {level}";
+            renderer.DrawString(levelText, 1, 2, ConsoleColor.White);
+        }
+
+        public override bool IsDone()
+        {            
+            return hasWon || gameOver;
         }
     }
 }

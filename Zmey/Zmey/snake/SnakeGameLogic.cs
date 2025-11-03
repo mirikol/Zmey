@@ -4,66 +4,100 @@ namespace Zmey.snake
 {
     internal class SnakeGameLogic : BaseGameLogic
     {
-        private SnakeGameplayState gameplayState = new SnakeGameplayState();
+        private bool _newGamePending = false;
+        private int _currentLevel;
+
+        private ShowTextState _showTextState = new ShowTextState(2);
+
+        private SnakeGameplayState _gameplayState = new SnakeGameplayState();
 
         public override void OnArrowUp()
         {
-            if (CurrentState != gameplayState)
+            if (CurrentState != _gameplayState)
                 return;
 
-            gameplayState.SetDirection(SnakeDir.Up);
+            _gameplayState.SetDirection(SnakeDir.Up);
         }
 
         public override void OnArrowDown()
         {
-            if (CurrentState != gameplayState)
+            if (CurrentState != _gameplayState)
                 return;
 
-            gameplayState.SetDirection(SnakeDir.Down);
+            _gameplayState.SetDirection(SnakeDir.Down);
         }
 
         public override void OnArrowLeft()
         {
-            if (CurrentState != gameplayState)
+            if (CurrentState != _gameplayState)
                 return;
 
-            gameplayState.SetDirection(SnakeDir.Left);
+            _gameplayState.SetDirection(SnakeDir.Left);
         }
 
         public override void OnArrowRight()
         {
-            if (CurrentState != gameplayState)
+            if (CurrentState != _gameplayState)
                 return;
 
-            gameplayState.SetDirection(SnakeDir.Right);
+            _gameplayState.SetDirection(SnakeDir.Right);
+        }
+        public void GoToGameOver()
+        {
+            _currentLevel = 0;
+            _newGamePending = true;
+            _showTextState.Text = "Вы проиграли.";
+            ChangeState(_showTextState);
         }
 
         public void GotoGameplay()
         {
-            gameplayState.fieldWidth = ScreenWidth;
-            gameplayState.fieldHeight = ScreenHeight;
-            ChangeState(gameplayState);
-            gameplayState.Reset();
+            _gameplayState.level = _currentLevel;
+            _gameplayState.fieldWidth = ScreenWidth;
+            _gameplayState.fieldHeight = ScreenHeight;
+            ChangeState(_gameplayState);
+            _gameplayState.Reset();
         }
+
+        public void GoToNextLevel()
+        {
+            _currentLevel++;
+            _newGamePending = false;
+            _showTextState.Text = $"Следующий уровень: {_currentLevel}";
+            ChangeState(_showTextState);
+        }
+
         public override void Update(float deltaTime)
         {
-            if (CurrentState != gameplayState)
+            if (CurrentState != null && !CurrentState.IsDone())
+                return;
+
+            if (CurrentState == null || (CurrentState == _gameplayState && _gameplayState.gameOver == false))
+                GoToNextLevel();
+
+            else if (CurrentState == _gameplayState && _gameplayState.gameOver == true)
+                GoToGameOver();
+
+            else if (CurrentState != _gameplayState && _newGamePending == true)
+                GoToNextLevel();
+
+            else if (CurrentState != _gameplayState && _newGamePending == false)
                 GotoGameplay();
         }
 
         public override ConsoleColor[] CreatePalette()
         {
-            return new ConsoleColor[]
-            {
+            return
+            [
                 ConsoleColor.Green,
                 ConsoleColor.Red,
+                ConsoleColor.Yellow,
                 ConsoleColor.Black,
                 ConsoleColor.Gray,
                 ConsoleColor.White,
-                ConsoleColor.Yellow,
                 ConsoleColor.Blue,
                 ConsoleColor.DarkRed
-            };
+            ];
         }
     }
 }

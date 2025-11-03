@@ -2,15 +2,10 @@
 {
     internal abstract class BaseGameLogic : ConsoleInput.IArrowListener
     {
-        protected BaseGameState? currentState { get; private set; }
-        protected float time {  get; private set; }
-        protected int screenWidth { get; private set; }
-        protected int screenHeight { get; private set; }
-
-        public BaseGameState? CurrentState => currentState;
-        public float Time => time;
-        public int ScreenWidth => screenWidth;
-        public int ScreenHeight => screenHeight;
+        protected BaseGameState? CurrentState { get; private set; }
+        protected float Time {  get; private set; }
+        protected int ScreenWidth { get; private set; }
+        protected int ScreenHeight { get; private set; }
 
         public abstract void Update(float deltaTime);
         public abstract void OnArrowDown();
@@ -21,12 +16,12 @@
 
         public void DrawNewState(float deltaTime, ConsoleRenderer renderer)
         {
-            time += deltaTime;
-            screenWidth = renderer.width;
-            screenHeight = renderer.height;
+            Time += deltaTime;
+            ScreenWidth = renderer.Width;
+            ScreenHeight = renderer.Height;
 
-            currentState?.Update(deltaTime);
-            currentState?.Draw(renderer);
+            CurrentState?.Update(deltaTime);
+            CurrentState?.Draw(renderer);
 
             Update(deltaTime);
         }
@@ -41,8 +36,8 @@
             if (newState == null)
                 return;
 
-            currentState?.Reset();
-            currentState = newState;
+            CurrentState?.Reset();
+            CurrentState = newState;
         }
     }
 }

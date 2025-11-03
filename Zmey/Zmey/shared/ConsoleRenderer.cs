@@ -8,8 +8,8 @@ namespace Zmey.shared
 {
     public class ConsoleRenderer
     {
-        public int width { get; private set; }
-        public int height { get; private set; }
+        public int Width { get; private set; }
+        public int Height { get; private set; }
 
         private const int MaxColors = 8;
         private readonly ConsoleColor[] _colors;
@@ -18,7 +18,7 @@ namespace Zmey.shared
         private readonly int _maxWidth;
         private readonly int _maxHeight;
 
-        public ConsoleColor bgColor {  get; set; }
+        public ConsoleColor BgColor {  get; set; }
 
         public char this[int w, int h]
         {
@@ -39,8 +39,8 @@ namespace Zmey.shared
 
             _maxWidth = Console.LargestWindowWidth;
             _maxHeight = Console.LargestWindowHeight;
-            width = Console.WindowWidth;
-            height = Console.WindowHeight;
+            Width = Console.WindowWidth;
+            Height = Console.WindowHeight;
 
             _pixels = new char[_maxWidth, _maxHeight];
             _pixelColors = new byte[_maxWidth, _maxHeight];
@@ -52,20 +52,19 @@ namespace Zmey.shared
             _pixelColors[w, h] = colorIdx;
         }
 
-
         public void Render()
         {
             Console.Clear();
-            Console.BackgroundColor = bgColor;
+            Console.BackgroundColor = BgColor;
 
-            for (var w = 0; w < width; w++)
-                for (var h = 0; h < height; h++)
+            for (var w = 0; w < Width; w++)
+                for (var h = 0; h < Height; h++)
                 {
                     var colorIdx = _pixelColors[w, h];
                     var color = _colors[colorIdx];
                     var symbol = _pixels[w, h];
 
-                    if (symbol == 0 || color == bgColor)
+                    if (symbol == 0 || color == BgColor)
                         continue;
 
                     Console.ForegroundColor = color;
@@ -93,8 +92,8 @@ namespace Zmey.shared
 
         public void Clear()
         {
-            for (int w = 0; w < width; w++)
-                for (int h = 0; h < height; h++)
+            for (int w = 0; w < Width; w++)
+                for (int h = 0; h < Height; h++)
                 {
                     _pixelColors[w, h] = 0;
                     _pixels[w, h] = (char) 0;
@@ -107,7 +106,7 @@ namespace Zmey.shared
                 return false;
 
             if (_maxWidth != casted._maxWidth || _maxHeight != casted._maxHeight ||
-                width != casted.width || height != casted.height ||
+                Width != casted.Width || Height != casted.Height ||
                 _colors.Length != casted._colors.Length)
             {
                 return false;
@@ -119,8 +118,8 @@ namespace Zmey.shared
                     return false;
             }
 
-            for (int w = 0; w < width; w++)
-                for (var h = 0; h < height; h++)
+            for (int w = 0; w < Width; w++)
+                for (var h = 0; h < Height; h++)
                 {
                     if (_pixels[w, h] != casted._pixels[w, h] ||
                                     _pixelColors[w, h] != casted._pixelColors[w, h])
@@ -134,15 +133,15 @@ namespace Zmey.shared
 
         public override int GetHashCode()
         {
-            var hash = HashCode.Combine(_maxWidth, _maxHeight, width, height);
+            var hash = HashCode.Combine(_maxWidth, _maxHeight, Width, Height);
 
             for (int i=0; i<_colors.Length; i++)
             {
                 hash = HashCode.Combine(hash, _colors[i]);
             }
 
-            for (int w = 0; w < width; w++)
-                for (var h = 0; h < height; h++)
+            for (int w = 0; w < Width; w++)
+                for (var h = 0; h < Height; h++)
                 {
                     hash = HashCode.Combine(hash, _pixelColors[w, h], _pixels[w, h]);
                 }
