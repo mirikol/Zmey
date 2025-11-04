@@ -7,9 +7,9 @@ namespace Zmey.snake
         private bool _newGamePending = false;
         private int _currentLevel;
 
-        private ShowTextState _showTextState = new ShowTextState(2);
+        private ShowTextState _showTextState = new(2);
 
-        private SnakeGameplayState _gameplayState = new SnakeGameplayState();
+        private SnakeGameplayState _gameplayState = new();
 
         public override void OnArrowUp()
         {

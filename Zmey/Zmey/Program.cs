@@ -32,8 +32,7 @@ namespace Zmey
 
                 gameLogic.DrawNewState(deltaTime, currRenderer);
 
-                if (currRenderer != prevRenderer)
-                    currRenderer.Render();
+                if (!currRenderer.Equals(prevRenderer)) currRenderer.Render();
 
                 var tmp = prevRenderer;
                 prevRenderer = currRenderer;
